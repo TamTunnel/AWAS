@@ -14,6 +14,27 @@
 
 The AI Web Action Standard (AWAS) defines a machine-readable format for describing actionable operations on web pages. It enables AI browsers and agents to interact with websites efficiently while maintaining full backwards compatibility with traditional browsers.
 
+## Protocol Interoperability: MCP, ADK/A2A
+
+AWAS supports direct integration with agent protocols and tool orchestration standards out of the box:
+
+- `/well-known/mcp-manifest.json` for [Model Context Protocol (MCP)] — describes tool capabilities for model-to-API agent flows.
+- `/well-known/a2a-manifest.json` for [Agent2Agent (A2A) and Google ADK] — enabling agent discovery, delegation, and specialist invocation.
+
+These files are automatically updatable and work alongside the main AWAS manifest. See the [Interoperability Wiki](https://github.com/TamTunnel/awas/wiki/Interoperability) for full schema, usage guides, and example agent workflows.
+
+**Sample Python: Discover all protocol manifests**
+```
+import requests
+for manifest in [
+'/.well-known/ai-actions.json',
+'/.well-known/mcp-manifest.json',
+'/.well-known/a2a-manifest.json'
+]:
+resp = requests.get(f'https://yoursite.com{manifest}')
+if resp.status_code == 200:
+print(manifest, 'found:', resp.json())
+```
 ### Design Principles
 
 1. **Non-Disruptive**: Works alongside existing HTML without modifications
