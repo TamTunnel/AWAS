@@ -541,6 +541,21 @@ export default {
 }
 </script>
 ```
+## Protocol Integrations: MCP, A2A, ADK
+
+To maximize reach and agent ecosystem compatibility, AWAS provides:
+
+- **MCP manifest:**  
+  `.well-known/mcp-manifest.json` — for Model Context Protocol and compatible agent frameworks.
+- **A2A/ADK manifest:**  
+  `.well-known/a2a-manifest.json` — for multi-agent orchestrators and Google Agent Development Kit users.
+
+Add or expose these files as static JSON and your site is instantly discoverable by compliant agents.
+
+**For more, including schema extensions and usage code, see:**  
+👉 [Wiki – Interoperability](https://github.com/TamTunnel/awas/wiki/Interoperability)
+
+
 
 ## Troubleshooting
 
