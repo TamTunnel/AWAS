@@ -1,6 +1,6 @@
 # AWAS - AI Web Action Standard
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/TamTunnel/awas)
+[![Version](https://img.shields.io/badge/version-1.0.1-blue.svg)](https://github.com/TamTunnel/awas)
 
 **AI Web Action Standard (AWAS)** is an open-source specification that enables AI browsers like Atlas, Comet, and other AI agents to interact with websites through machine-readable action definitions—without disrupting traditional human browsing.
 
