@@ -1,0 +1,45 @@
+{
+  "$schema": "https://a2a.dev/schema/manifest.json",
+  "name": "AWAS - AI-readable Web Actions Standard",
+  "version": "1.0.0",
+  "description": "Open-source standard for AI-readable web actions enabling AI browsers to interact with websites efficiently",
+  "protocol": "A2A",
+  "capabilities": {
+    "actions": true,
+    "workflows": true,
+    "state_management": true,
+    "authentication": false
+  },
+  "endpoints": {
+    "actions_registry": "/.well-known/awas.json",
+    "schema_definition": "/schema/awas-schema.json",
+    "api_base": "https://github.com/TamTunnel/awas"
+  },
+  "discovery": {
+    "auto_discoverable": true,
+    "discovery_endpoint": "/.well-known/a2a-manifest.json",
+    "standard_compliant": true
+  },
+  "integration": {
+    "adk_compatible": true,
+    "a2a_version": "1.0",
+    "supported_agents": [
+      "OpenAI Agents",
+      "Anthropic Claude",
+      "AI browsers",
+      "Custom A2A implementations"
+    ]
+  },
+  "metadata": {
+    "homepage": "https://github.com/TamTunnel/awas",
+    "documentation": "https://github.com/TamTunnel/awas/wiki",
+    "license": "MIT",
+    "author": "TamTunnel",
+    "repository": "https://github.com/TamTunnel/awas"
+  },
+  "interoperability": {
+    "cross_protocol": true,
+    "compatible_with": ["MCP", "OpenAPI", "GraphQL"],
+    "notes": "100% interoperability with MCP and other agent communication protocols"
+  }
+}
