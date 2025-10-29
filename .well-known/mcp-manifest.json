@@ -1,0 +1,30 @@
+{
+  "$schema": "https://modelcontextprotocol.io/schema/manifest.json",
+  "name": "AWAS - AI-readable Web Actions Standard",
+  "version": "1.0.0",
+  "description": "Open-source standard for AI-readable web actions enabling AI browsers to interact with websites efficiently",
+  "capabilities": [
+    "actions",
+    "resources",
+    "prompts"
+  ],
+  "endpoints": {
+    "actions": "/.well-known/awas.json",
+    "schema": "/schema/awas-schema.json"
+  },
+  "metadata": {
+    "homepage": "https://github.com/TamTunnel/awas",
+    "documentation": "https://github.com/TamTunnel/awas/wiki",
+    "license": "MIT",
+    "author": "TamTunnel"
+  },
+  "integration": {
+    "protocol": "MCP",
+    "version": "1.0",
+    "compatibility": ["Anthropic Claude", "OpenAI", "AI browsers"],
+    "discovery": {
+      "auto_discoverable": true,
+      "endpoint_location": "/.well-known/mcp-manifest.json"
+    }
+  }
+}
