@@ -1,0 +1,64 @@
+# robots.txt - Extended for AI Agents
+# Standard Web Crawler Rules
+
+User-agent: *
+Disallow: /admin/
+Disallow: /private/
+Disallow: /api/internal/
+Allow: /
+
+# Search Engine Crawlers
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# AI Agent Specific Rules
+User-agent: ChatGPT-User
+User-agent: GPTBot
+User-agent: ClaudeBot
+User-agent: PerplexityBot
+Disallow: /admin/
+Disallow: /user-data/
+Allow: /
+Allow: /api/public/
+
+# AI Browser Agents (Atlas, Comet, etc.)
+User-agent: AtlasBot
+User-agent: CometBot
+User-agent: AI-Browser/*
+Disallow: /checkout/
+Disallow: /payment/
+Allow: /products/
+Allow: /search/
+Allow: /api/public/
+
+# AWAS Discovery Hints
+# These comment-based hints help AI agents discover capabilities
+# agentic-manifest: /.well-known/ai-actions.json
+# ai-capabilities: /.well-known/ai-capabilities
+# ai-sitemap: /.well-known/ai-sitemap.json
+
+# Rate Limiting Hints for AI Agents
+# ai-rate-limit: 60/minute
+# ai-burst-limit: 10
+# ai-concurrent-sessions: 3
+
+# Authentication Requirements
+# ai-auth-required: false
+# ai-session-required: true
+# ai-api-key-required: false
+
+# Allowed Actions for AI Agents
+# ai-allowed-actions: search, filter, view, compare
+# ai-restricted-actions: purchase, checkout, payment, account-modification
+
+# AI Safety and Ethics
+# ai-respect-privacy: true
+# ai-no-data-training: true
+# ai-human-verification-required: checkout, payment, account-deletion
+
+# Sitemaps
+Sitemap: https://example.com/sitemap.xml
+Sitemap: https://example.com/.well-known/ai-sitemap.json

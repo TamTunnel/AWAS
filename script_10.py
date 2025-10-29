@@ -1,0 +1,222 @@
+
+# Create JSON Schema for validation
+schema = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://awas.dev/schema/v1/manifest.json",
+    "title": "AWAS Manifest",
+    "description": "AI Web Action Standard manifest schema",
+    "type": "object",
+    "required": ["version", "actions"],
+    "properties": {
+        "$schema": {
+            "type": "string",
+            "format": "uri"
+        },
+        "version": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+$"
+        },
+        "name": {
+            "type": "string"
+        },
+        "description": {
+            "type": "string"
+        },
+        "actions": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/action"
+            }
+        },
+        "workflows": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/workflow"
+            }
+        },
+        "rate_limits": {
+            "$ref": "#/definitions/rateLimits"
+        },
+        "authentication": {
+            "$ref": "#/definitions/authentication"
+        }
+    },
+    "definitions": {
+        "action": {
+            "type": "object",
+            "required": ["id", "type", "name", "method", "endpoint"],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "pattern": "^[a-z_][a-z0-9_]*$"
+                },
+                "type": {
+                    "type": "string",
+                    "enum": ["form_submission", "navigation", "search", "filter", "data_retrieval", "state_change", "custom"]
+                },
+                "name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "method": {
+                    "type": "string",
+                    "enum": ["GET", "POST", "PUT", "DELETE", "PATCH"]
+                },
+                "endpoint": {
+                    "type": "string"
+                },
+                "selector": {
+                    "type": "string"
+                },
+                "authentication_required": {
+                    "type": "boolean"
+                },
+                "inputs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/input"
+                    }
+                },
+                "outputs": {
+                    "$ref": "#/definitions/output"
+                }
+            }
+        },
+        "input": {
+            "type": "object",
+            "required": ["name", "type"],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string",
+                    "enum": ["string", "integer", "number", "boolean", "array", "object"]
+                },
+                "required": {
+                    "type": "boolean"
+                },
+                "default": {},
+                "selector": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "validation": {
+                    "$ref": "#/definitions/validation"
+                }
+            }
+        },
+        "validation": {
+            "type": "object",
+            "properties": {
+                "pattern": {
+                    "type": "string"
+                },
+                "min": {
+                    "type": "number"
+                },
+                "max": {
+                    "type": "number"
+                },
+                "minLength": {
+                    "type": "integer"
+                },
+                "maxLength": {
+                    "type": "integer"
+                },
+                "enum": {
+                    "type": "array"
+                }
+            }
+        },
+        "output": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string"
+                },
+                "schema": {
+                    "type": "object"
+                },
+                "success_codes": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "error_codes": {
+                    "type": "object"
+                }
+            }
+        },
+        "workflow": {
+            "type": "object",
+            "required": ["id", "name", "steps"],
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "steps": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "rateLimits": {
+            "type": "object",
+            "properties": {
+                "requests_per_minute": {
+                    "type": "integer"
+                },
+                "requests_per_hour": {
+                    "type": "integer"
+                },
+                "burst_limit": {
+                    "type": "integer"
+                },
+                "concurrent_requests": {
+                    "type": "integer"
+                }
+            }
+        },
+        "authentication": {
+            "type": "object",
+            "properties": {
+                "required": {
+                    "type": "boolean"
+                },
+                "optional_for": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "methods": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "enum": ["session", "api_key", "oauth", "jwt"]
+                    }
+                },
+                "endpoints": {
+                    "type": "object"
+                }
+            }
+        }
+    }
+}
+
+files['schema/ai-actions-schema.json'] = json.dumps(schema, indent=2)
+print("Created schema/ai-actions-schema.json")

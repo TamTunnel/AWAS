@@ -1,0 +1,15 @@
+File Path,Size (bytes),Description
+.gitignore,385,Git ignore patterns
+CONTRIBUTING.md,2765,Guidelines for contributing to the project
+LICENSE,1074,MIT License
+README.md,6335,Main project README with quick start and overview
+docs/FAQ.md,8251,Frequently asked questions
+docs/IMPLEMENTATION.md,13431,Step-by-step implementation guide
+docs/SECURITY.md,13019,Comprehensive security guidelines
+docs/SPECIFICATION.md,10209,Complete technical specification v1.0
+examples/ai-actions.json,6491,Example e-commerce action manifest
+examples/html-example.html,11785,Complete HTML page example with AWAS attributes
+examples/implementations/javascript/awas-parser.js,10861,JavaScript client library for parsing actions
+examples/implementations/python/awas_middleware.py,12639,Python/Flask middleware implementation
+examples/robots.txt,1508,Extended robots.txt with AI agent directives
+schema/ai-actions-schema.json,5090,JSON Schema for manifest validation
