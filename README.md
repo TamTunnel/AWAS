@@ -1,4 +1,5 @@
 # AWAS - AI Web Action Standard
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Version](https://img.shields.io/badge/version-1.0.1-blue.svg)](https://github.com/TamTunnel/awas)
 
@@ -7,6 +8,7 @@
 ## 🎯 Problem Statement
 
 Current AI browsers resort to slow, fragile browser automation that mimics human clicking. This approach:
+
 - Is computationally expensive
 - Breaks with UI changes
 - Provides no semantic understanding
@@ -16,10 +18,12 @@ Current AI browsers resort to slow, fragile browser automation that mimics human
 ## 💡 Solution
 
 AWAS provides a **dual-interface web architecture** where:
+
 - **Human users** browse normally through visual UI
 - **AI agents** interact through structured, machine-readable actions
 
 This is achieved through:
+
 1. **AI Action Manifest** - JSON specification of available actions
 2. **HTML Data Attributes** - Inline semantic hints for AI agents
 3. **Extended Robots.txt** - AI-specific policies and discovery
@@ -42,6 +46,7 @@ AWAS is designed to be **MCP (Model Context Protocol), A2A (Agent-to-Agent), and
 ### Protocol Support
 
 #### MCP (Model Context Protocol)
+
 AWAS supports MCP through `.well-known/mcp-manifest.json` for standardized AI agent communication:
 
 ```json
@@ -60,210 +65,148 @@ AWAS supports MCP through `.well-known/mcp-manifest.json` for standardized AI ag
 **For AI Agents:**
 ```javascript
 // Discover MCP capabilities
-const mcpManifest = await fetch('https://example.com/.well-known/mcp-manifest.json');
-const capabilities = await mcpManifest.json();
-
-// Execute actions via MCP
-const actionsUrl = capabilities.actions.discover;
-const actions = await fetch(actionsUrl).then(r => r.json());
+const manifest = await fetch('https://example.com/.well-known/mcp-manifest.json');
+const actions = await fetch(manifest.actions.discover);
 ```
 
-#### A2A/ADK (Agent-to-Agent / Agent Development Kit)
-AWAS supports A2A protocol through `.well-known/a2a-manifest.json` for agent-to-agent coordination:
+#### A2A & ADK Integration
 
-```json
-{
-  "protocol": "a2a",
-  "version": "1.0",
-  "capabilities": {
-    "action_discovery": true,
-    "action_execution": true,
-    "delegation": false
-  },
-  "endpoints": {
-    "actions": "/.well-known/ai-actions.json",
-    "execute": "/api/ai-actions"
-  }
-}
-```
+AWAS can be used as a provider in agent-to-agent communication:
 
-**For AI Agents:**
 ```python
-import httpx
+# ADK Integration Example
+from agent_dev_kit import Provider
 
-# Discover A2A capabilities
-async with httpx.AsyncClient() as client:
-    a2a_manifest = await client.get('https://example.com/.well-known/a2a-manifest.json')
-    manifest = a2a_manifest.json()
+class AWASProvider(Provider):
+    def discover_actions(self):
+        return fetch_awas_manifest(self.base_url)
     
-    # Load available actions
-    actions_url = manifest['endpoints']['actions']
-    actions = await client.get(actions_url)
+    def execute_action(self, action_id, params):
+        return call_awas_action(action_id, params)
 ```
-
-### Discovery Mechanism
-
-**For Site Implementers:**
-
-1. Create both manifest files in `.well-known/` directory:
-   - `.well-known/mcp-manifest.json`
-   - `.well-known/a2a-manifest.json`
-
-2. Add discovery links to your HTML `<head>`:
-```html
-<link rel="mcp-manifest" href="/.well-known/mcp-manifest.json" type="application/json" />
-<link rel="a2a-manifest" href="/.well-known/a2a-manifest.json" type="application/json" />
-<link rel="ai-actions" href="/.well-known/ai-actions.json" type="application/json" />
-```
-
-3. Ensure your AWAS action manifest is accessible and properly formatted.
-
-**For Agent Developers:**
-
-```javascript
-// Multi-protocol discovery
-async function discoverCapabilities(siteUrl) {
-  const protocols = ['mcp-manifest', 'a2a-manifest', 'ai-actions'];
-  const capabilities = {};
-  
-  for (const protocol of protocols) {
-    try {
-      const response = await fetch(`${siteUrl}/.well-known/${protocol}.json`);
-      if (response.ok) {
-        capabilities[protocol] = await response.json();
-      }
-    } catch (e) {
-      console.log(`${protocol} not available`);
-    }
-  }
-  
-  return capabilities;
-}
-```
-
-### Integration Examples
-
-**Site Implementation:**
-```javascript
-// Express.js middleware for multi-protocol support
-app.get('/.well-known/:manifest', (req, res) => {
-  const manifests = {
-    'mcp-manifest.json': mcpConfig,
-    'a2a-manifest.json': a2aConfig,
-    'ai-actions.json': awasActions
-  };
-  
-  const manifest = manifests[req.params.manifest];
-  if (manifest) {
-    res.json(manifest);
-  } else {
-    res.status(404).send('Manifest not found');
-  }
-});
-```
-
-**Agent Usage:**
-```python
-# Python agent using AWAS with MCP/A2A
-class AWASAgent:
-    async def connect(self, site_url):
-        # Check for protocol support
-        self.mcp = await self.check_protocol(site_url, 'mcp-manifest')
-        self.a2a = await self.check_protocol(site_url, 'a2a-manifest')
-        self.awas = await self.load_actions(site_url)
-        
-    async def execute_action(self, action_id, params):
-        # Use the most appropriate protocol
-        if self.mcp and 'execute' in self.mcp['actions']:
-            return await self.mcp_execute(action_id, params)
-        elif self.a2a and 'execute' in self.a2a['endpoints']:
-            return await self.a2a_execute(action_id, params)
-        else:
-            return await self.awas_execute(action_id, params)
-```
-
-For complete interoperability implementation details, see the [Interoperability Wiki Page](https://github.com/TamTunnel/awas/wiki/Interoperability).
 
 ## 🚀 Quick Start
 
 ### For Website Owners
 
-1. **Create Action Manifest**
-```bash
-mkdir -p .well-known
-# Copy examples/ai-actions.json to .well-known/ai-actions.json
+1. **Create AI Action Manifest** (`/.well-known/ai-actions.json`):
+
+```json
+{
+  "version": "1.0.0",
+  "actions": [
+    {
+      "id": "search_products",
+      "name": "Search Products",
+      "description": "Search for products in the catalog",
+      "method": "GET",
+      "endpoint": "/api/search",
+      "parameters": [
+        {
+          "name": "query",
+          "type": "string",
+          "required": true,
+          "description": "Search query"
+        },
+        {
+          "name": "category",
+          "type": "string",
+          "enum": ["electronics", "clothing", "books"],
+          "description": "Filter by category"
+        }
+      ],
+      "response": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": { "type": "string" },
+                "name": { "type": "string" },
+                "price": { "type": "number" }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
 ```
 
-2. **Add Discovery Link to HTML**
+2. **Add HTML Data Attributes** (optional enhancement):
+
 ```html
-<link rel="ai-actions" type="application/json" href="/.well-known/ai-actions.json" />
+<div data-awas-action="search_products" data-awas-element="search-form">
+  <input type="text" name="query" data-awas-param="query">
+  <select name="category" data-awas-param="category">
+    <option value="electronics">Electronics</option>
+    <option value="clothing">Clothing</option>
+  </select>
+  <button data-awas-trigger>Search</button>
+</div>
 ```
 
-3. **Add Data Attributes to Interactive Elements**
-```html
-<button data-ai-action="add_to_cart"
-    data-ai-action-type="form_submission">
-    Add to Cart
-</button>
+3. **Update robots.txt**:
+
+```
+User-agent: *
+Allow: /
+
+# AI Agent Directives
+AI-Action-Manifest: /.well-known/ai-actions.json
+AI-Rate-Limit: 60/minute
+AI-Auth-Required: Bearer
 ```
 
-4. **See full documentation:**
-- [SPECIFICATION.md](./SPECIFICATION.md) - Complete technical spec
-- [IMPLEMENTATION.md](./IMPLEMENTATION.md) - Implementation guide
-- [Examples](./examples/) - Code samples
+### For AI Browser Developers
 
-### For AI Agent Developers
-
-1. **Discover Available Actions**
 ```javascript
-const response = await fetch('https://example.com/.well-known/ai-actions.json');
-const manifest = await response.json();
-```
+const AWAS = require('@awas/client');
 
-2. **Parse Action Definitions**
-```javascript
-const actions = manifest.actions;
-const searchAction = actions.find(a => a.id === 'search');
-```
+const client = new AWAS.Client('https://example.com');
 
-3. **Execute Actions**
-```javascript
-const result = await fetch(searchAction.endpoint, {
-  method: searchAction.method,
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ query: 'laptops' })
+// Discover available actions
+const manifest = await client.discover();
+
+// Execute an action
+const results = await client.executeAction('search_products', {
+  query: 'laptop',
+  category: 'electronics'
 });
+
+console.log(results);
 ```
 
-4. **See full documentation:**
-- [Agent Implementation Guide](./docs/AGENT_GUIDE.md)
+## 📖 Documentation
+
+- [Full Specification](./docs/SPECIFICATION.md)
+- [Implementation Guide](./docs/IMPLEMENTATION.md)
+- [Examples](./examples/)
 - [API Reference](./docs/API.md)
+- [Security Best Practices](./docs/SECURITY.md)
 
-## 📚 Documentation
-
-- [SPECIFICATION.md](./SPECIFICATION.md) - Complete technical specification
-- [IMPLEMENTATION.md](./IMPLEMENTATION.md) - Implementation guide for developers
-- [SECURITY.md](./docs/SECURITY.md) - Security guidelines and best practices
-- [FAQ.md](./FAQ.md) - Frequently asked questions
-- [Examples](./examples/) - Working code examples
-
-## 💼 Use Cases
+## 💪 Benefits
 
 ### For Website Owners
-- **Better SEO** - Rank higher in AI-powered search results
-- **Reduced Server Load** - Efficient API calls vs. heavy DOM scraping
-- **Controlled Access** - Define exactly what AI agents can do
-- **Monetization** - Premium actions for authenticated agents
-- **Analytics** - Track AI agent interactions separately
+
+- **Better AI Rankings** - Structured data helps AI understand your site
+- **Reduced Server Load** - Efficient API calls vs. page scraping
+- **Control & Visibility** - Define what AI can and cannot do
+- **Future-Proof** - Adapt to AI-driven web without redesign
 - **Competitive Advantage** - Early adopters rank higher in AI results
 
 ### For AI Developers
+
 - **Faster Execution** - Direct action calls vs. DOM automation
 - **Reliable Operation** - Resilient to UI changes
 - **Rich Semantics** - Understand intent, not just pixels
 - **Standard Protocol** - One integration works everywhere
 
 ### For Users
+
 - **Faster Results** - AI completes tasks in seconds
 - **More Reliable** - Fewer failures and retries
 - **Better Privacy** - Explicit permissions and audit trails
@@ -272,6 +215,7 @@ const result = await fetch(searchAction.endpoint, {
 ## 🔐 Security
 
 AWAS includes security features:
+
 - Rate limiting specifications
 - Authentication requirements
 - Action permission system
@@ -291,7 +235,12 @@ We welcome contributions! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for gu
 
 ## 📄 License
 
-MIT License - see [LICENSE](./LICENSE) for details.
+AWAS is licensed under the **Apache License, Version 2.0**.  
+You must include NOTICE and this license when redistributing or creating derivative works.
+
+See [LICENSE](./LICENSE) and [NOTICE](./NOTICE) for details.
+
+> This project was formerly MIT licensed; as of October 29, 2025, AWAS is under Apache 2.0.
 
 ## 🙏 Acknowledgments
 
@@ -315,4 +264,5 @@ MIT License - see [LICENSE](./LICENSE) for details.
 - [ ] v2.0 - Extended protocol integrations
 
 ---
+
 **Made with ❤️ for the AI-driven web**
