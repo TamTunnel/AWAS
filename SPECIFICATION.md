@@ -1,4 +1,4 @@
-# AWAS Technical Specification v1.0
+# AWAS Technical Specification v1.1
 
 ## Table of Contents
 - [Overview](#overview)
@@ -86,14 +86,18 @@ This follows the RFC 8615 well-known URI specification.
 ```json
 {
   "$schema": "https://awas.dev/schema/v1/manifest.json",
-  "version": "1.0",
-  "name": "string",
-  "description": "string",
+  "specVersion": "1.1",
+  "lastUpdated": "2025-12-01T00:00:00Z",
+  "name": "string (optional)",
+  "description": "string (optional)",
   "actions": [Action],
-  "workflows": [Workflow],
-  "rate_limits": RateLimits,
-  "authentication": Authentication
+  "workflows": [Workflow] (optional),
+  "conformanceLevel": "L1|L2|L3 (optional)",
+  "security": Security (optional),
+  "rate_limits": RateLimits (optional),
+  "authentication": Authentication (optional)
 }
+
 ```
 
 ### Action Object
@@ -101,17 +105,28 @@ This follows the RFC 8615 well-known URI specification.
 ```json
 {
   "id": "string (required)",
-  "type": "string (required)",
   "name": "string (required)",
   "description": "string (optional)",
   "method": "GET|POST|PUT|DELETE|PATCH (required)",
   "endpoint": "string (required)",
+  "intent": "read|write|delete|execute (optional)",
+  "sideEffect": "safe|idempotent|destructive (optional)",
+  "conformanceLevel": "L1|L2|L3 (optional)",
   "selector": "string (optional)",
-  "inputs": [Input],
-  "outputs": Output,
-  "authentication_required": "boolean (optional)",
-  "rate_limit": "number (optional)"
+  "parameters": [Parameter] (legacy, use inputSchema)",
+  "inputSchema": "JSON Schema object (optional)",
+  "outputSchema": "JSON Schema object (optional)",
+  "openapi": { "$ref": "string (optional)" },
+  "previewUrl": "string (optional)",
+  "dryRunSupported": "boolean (optional)",
+  "idempotencyKeySupported": "boolean (optional)",
+  "idempotencyKeyHeader": "string (optional)",
+  "preconditions": [string] (optional)",
+  "authScopes": [string] (optional)",
+  "rateLimitHint": "string (optional)",
+  "authentication_required": "boolean (optional)"
 }
+
 ```
 
 #### Action Types
@@ -200,6 +215,17 @@ This follows the RFC 8615 well-known URI specification.
     "login": "/auth/login",
     "token": "/auth/token"
   }
+}
+```
+### Security Object
+
+```json
+{
+"csrfRequired": "boolean (optional)",
+"csrfTokenHeader": "string (optional)",
+"requiredHeaders": ["string"] (optional),
+"allowedOrigins": ["string"] (optional),
+"sameSite": "strict|lax|none (optional)"
 }
 ```
 
@@ -435,6 +461,17 @@ Implementations MUST enforce rate limits specified in the manifest.
 
 Actions requiring authentication MUST be clearly marked in the manifest.
 
+### Conformance Levels
+
+AWAS v1.1 introduces structured conformance levels to enable phased adoption:
+
+- **Level 1 (L1 - Read-Only)**: Safe, read-only actions (search, filter, view). No write operations, no preview required.
+- **Level 2 (L2 - Write with Preview)**: Write operations with preview/dry-run support before execution. Includes L1 capabilities.
+- **Level 3 (L3 - Full Transactional)**: Complete transactional support with idempotency, rollback, and complex workflows. Includes L1 and L2 capabilities.
+
+See [CONFORMANCE_LEVELS.md](./CONFORMANCE_LEVELS.md) for detailed requirements and examples.
+
+
 ### CSRF Protection
 
 Form submissions MUST implement CSRF protection. Include CSRF tokens in the manifest or action definitions.
@@ -459,7 +496,7 @@ This specification uses semantic versioning (MAJOR.MINOR.PATCH).
 - **MINOR**: Backwards-compatible feature additions
 - **PATCH**: Backwards-compatible bug fixes
 
-Current version: **1.0.0**
+Current version: **1.1.0**
 
 ## References
 
