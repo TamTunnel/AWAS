@@ -94,7 +94,8 @@ class AWASProvider(Provider):
 
 ```json
 {
-  "version": "1.0.0",
+  "specVersion": "1.1",
+  "lastUpdated": "2025-12-01T00:00:00Z",
   "actions": [
     {
       "id": "search_products",
@@ -102,6 +103,9 @@ class AWASProvider(Provider):
       "description": "Search for products in the catalog",
       "method": "GET",
       "endpoint": "/api/search",
+      "intent": "read",
+      "sideEffect": "safe",
+      "conformanceLevel": "L1",
       "parameters": [
         {
           "name": "query",
@@ -116,7 +120,15 @@ class AWASProvider(Provider):
           "description": "Filter by category"
         }
       ],
-      "response": {
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": { "type": "string" },
+          "category": { "type": "string", "enum": ["electronics", "clothing", "books"] }
+        },
+        "required": ["query"]
+      },
+      "outputSchema": {
         "type": "object",
         "properties": {
           "results": {
@@ -135,6 +147,7 @@ class AWASProvider(Provider):
     }
   ]
 }
+
 ```
 
 2. **Add HTML Data Attributes** (optional enhancement):
