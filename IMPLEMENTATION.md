@@ -26,25 +26,50 @@ Create a file at `/.well-known/ai-actions.json`:
 ```json
 {
   "$schema": "https://awas.dev/schema/v1/manifest.json",
-  "version": "1.0",
+  "specVersion": "1.1",
+  "lastUpdated": "2025-12-01T00:00:00Z",
   "name": "My Website Actions",
   "description": "Available actions for AI agents",
+  "conformanceLevel": "L1",
   "actions": [
     {
       "id": "search_products",
-      "type": "search",
       "name": "Search Products",
       "description": "Search for products by keyword",
       "method": "GET",
       "endpoint": "/api/search",
-      "inputs": [
+      "intent": "read",
+      "sideEffect": "safe",
+      "conformanceLevel": "L1",
+      "parameters": [
         {
           "name": "q",
           "type": "string",
           "required": true,
           "description": "Search query"
         }
-      ]
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "q": {
+            "type": "string",
+            "description": "Search query"
+          }
+        },
+        "required": ["q"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        }
+      }
     }
   ],
   "rate_limits": {
@@ -55,6 +80,7 @@ Create a file at `/.well-known/ai-actions.json`:
     "required": false
   }
 }
+
 ```
 
 ### Step 2: Configure Web Server
