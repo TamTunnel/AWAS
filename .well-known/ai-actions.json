@@ -1,24 +1,36 @@
 {
-  "$schema": "https://awas.dev/schema/v1/manifest.json",
+  "$schema": "https://awas.dev/schema/v1.1/manifest.json",
+  "specVersion": "1.1",
   "version": "1.0",
+  "lastUpdated": "2025-12-01T14:00:00Z",
   "name": "E-Commerce Example Store",
   "description": "AI-readable actions for product browsing and shopping",
+  "conformanceLevel": "L2",
   "actions": [
     {
       "id": "search_products",
       "type": "search",
+      "intent": "read",
+      "sideEffect": "safe",
       "name": "Search Products",
       "description": "Search for products by keyword, category, or filters",
       "method": "GET",
       "endpoint": "/api/search",
       "selector": "form[role='search']",
+      "authentication_required": false,
+      "conformanceLevel": "L1",
+      "rateLimitHint": {
+        "requests": 100,
+        "window": "1m"
+      },
       "inputs": [
         {
           "name": "q",
           "type": "string",
           "required": true,
           "description": "Search query",
-          "selector": "input[name='q']"
+          "selector": "input[name='q']",
+          "examples": ["laptop", "wireless headphones"]
         },
         {
           "name": "category",
@@ -27,236 +39,121 @@
           "description": "Filter by category",
           "selector": "select[name='category']",
           "validation": {
-            "enum": [
-              "electronics",
-              "clothing",
-              "home",
-              "sports"
-            ]
+            "enum": ["electronics", "clothing", "home", "books"]
           }
-        },
-        {
-          "name": "page",
-          "type": "integer",
-          "required": false,
-          "default": 1,
-          "description": "Page number for pagination"
         }
       ],
-      "outputs": {
+      "inputSchema": {
         "type": "object",
-        "schema": {
-          "success": "boolean",
-          "results": "array",
-          "total_results": "integer",
-          "page": "integer",
-          "per_page": "integer"
+        "properties": {
+          "q": { "type": "string", "minLength": 1 },
+          "category": { "type": "string", "enum": ["electronics", "clothing", "home", "books"] }
         },
-        "success_codes": [
-          200
-        ],
-        "error_codes": {
-          "400": "Invalid search parameters",
-          "429": "Rate limit exceeded"
+        "required": ["q"]
+      },
+      "outputs": {
+        "type": "application/json",
+        "success_codes": [200]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": { "type": "string" },
+                "name": { "type": "string" },
+                "price": { "type": "number" }
+              }
+            }
+          }
         }
       }
     },
     {
-      "id": "apply_filters",
-      "type": "filter",
-      "name": "Apply Product Filters",
-      "description": "Filter products by price range, brand, rating, etc.",
-      "method": "GET",
-      "endpoint": "/products/filter",
-      "selector": "form[data-action='filter']",
-      "inputs": [
-        {
-          "name": "category",
-          "type": "array",
-          "required": false,
-          "selector": "input[name='category[]']:checked"
-        },
-        {
-          "name": "price_min",
-          "type": "number",
-          "required": false,
-          "selector": "input[name='price_min']",
-          "validation": {
-            "min": 0
-          }
-        },
-        {
-          "name": "price_max",
-          "type": "number",
-          "required": false,
-          "selector": "input[name='price_max']",
-          "validation": {
-            "min": 0
-          }
-        },
-        {
-          "name": "brand",
-          "type": "array",
-          "required": false,
-          "selector": "input[name='brand[]']:checked"
-        },
-        {
-          "name": "rating",
-          "type": "integer",
-          "required": false,
-          "selector": "select[name='rating']",
-          "validation": {
-            "min": 1,
-            "max": 5
-          }
-        }
-      ]
-    },
-    {
       "id": "add_to_cart",
-      "type": "form_submission",
-      "name": "Add Product to Cart",
-      "description": "Add a product to the shopping cart",
+      "type": "state_change",
+      "intent": "write",
+      "sideEffect": "idempotent",
+      "name": "Add to Cart",
+      "description": "Add a product to shopping cart",
       "method": "POST",
       "endpoint": "/api/cart/add",
       "selector": "button[data-action='add-to-cart']",
-      "authentication_required": false,
+      "authentication_required": true,
+      "authScopes": ["cart:write"],
+      "idempotencyKeySupported": true,
+      "idempotencyKeyHeader": "Idempotency-Key",
+      "conformanceLevel": "L2",
+      "previewUrl": "/api/cart/preview",
+      "dryRunSupported": true,
+      "preconditions": ["Product must be in stock", "User must be logged in"],
+      "rateLimitHint": {
+        "requests": 50,
+        "window": "1m"
+      },
       "inputs": [
         {
           "name": "product_id",
           "type": "string",
           "required": true,
-          "selector": "input[name='product_id']",
-          "validation": {
-            "pattern": "^PROD-[A-Z0-9]+$"
-          }
+          "description": "Product ID",
+          "examples": ["prod_123", "prod_456"]
         },
         {
           "name": "quantity",
           "type": "integer",
           "required": false,
           "default": 1,
-          "selector": "input[name='quantity']",
+          "description": "Quantity to add",
           "validation": {
             "min": 1,
-            "max": 100
+            "max": 10
           }
-        },
-        {
-          "name": "variant_id",
-          "type": "string",
-          "required": false,
-          "selector": "select[name='variant']"
         }
       ],
-      "outputs": {
+      "inputSchema": {
         "type": "object",
-        "schema": {
-          "success": "boolean",
-          "cart_id": "string",
-          "product_id": "string",
-          "quantity": "integer",
-          "total_items": "integer",
-          "cart_total": "number"
+        "properties": {
+          "product_id": { "type": "string" },
+          "quantity": { "type": "integer", "minimum": 1, "maximum": 10, "default": 1 }
+        },
+        "required": ["product_id"]
+      },
+      "outputs": {
+        "type": "application/json",
+        "success_codes": [200, 201]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "cart_id": { "type": "string" },
+          "total_items": { "type": "integer" }
         }
       }
-    },
-    {
-      "id": "view_product",
-      "type": "navigation",
-      "name": "View Product Details",
-      "description": "Navigate to product detail page",
-      "method": "GET",
-      "endpoint": "/product/{product_id}",
-      "inputs": [
-        {
-          "name": "product_id",
-          "type": "string",
-          "required": true
-        }
-      ]
-    },
-    {
-      "id": "add_to_wishlist",
-      "type": "navigation",
-      "name": "Add to Wishlist",
-      "description": "Add product to user's wishlist",
-      "method": "GET",
-      "endpoint": "/wishlist/add",
-      "authentication_required": true,
-      "inputs": [
-        {
-          "name": "id",
-          "type": "string",
-          "required": true,
-          "description": "Product ID"
-        }
-      ]
-    },
-    {
-      "id": "compare_products",
-      "type": "navigation",
-      "name": "Compare Products",
-      "description": "Add product to comparison list",
-      "method": "GET",
-      "endpoint": "/compare",
-      "inputs": [
-        {
-          "name": "add",
-          "type": "string",
-          "required": true,
-          "description": "Product ID to add to comparison"
-        }
-      ]
     }
   ],
-  "workflows": [
-    {
-      "id": "purchase_flow",
-      "name": "Complete Purchase",
-      "description": "Full workflow from search to checkout",
-      "steps": [
-        "search_products",
-        "view_product",
-        "add_to_cart",
-        "view_cart",
-        "proceed_to_checkout"
-      ]
-    },
-    {
-      "id": "product_discovery",
-      "name": "Product Discovery",
-      "description": "Find and compare products",
-      "steps": [
-        "search_products",
-        "apply_filters",
-        "view_product",
-        "compare_products"
-      ]
-    }
-  ],
-  "rate_limits": {
-    "requests_per_minute": 60,
-    "requests_per_hour": 1000,
-    "burst_limit": 10,
-    "concurrent_requests": 3
+  "security": {
+    "csrfRequired": true,
+    "csrfTokenHeader": "X-CSRF-Token",
+    "requiredHeaders": ["Content-Type"],
+    "allowedOrigins": ["https://example.com"],
+    "sameSite": "Lax"
   },
   "authentication": {
     "required": false,
-    "optional_for": [
-      "add_to_cart",
-      "view_cart",
-      "add_to_wishlist"
-    ],
-    "methods": [
-      "session",
-      "api_key",
-      "oauth"
-    ],
+    "optional_for": ["search_products"],
+    "methods": ["session", "api_key"],
     "endpoints": {
       "login": "/auth/login",
-      "token": "/auth/token",
-      "refresh": "/auth/refresh"
+      "logout": "/auth/logout"
     }
+  },
+  "rate_limits": {
+    "requests_per_minute": 100,
+    "requests_per_hour": 1000,
+    "burst_limit": 20
   }
 }
