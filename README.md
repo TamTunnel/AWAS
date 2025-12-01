@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-[![Version](https://img.shields.io/badge/version-1.0.1-blue.svg)](https://github.com/TamTunnel/awas)
+[![Version](https://img.shields.io/badge/version-1.1-blue.svg)](https://github.com/TamTunnel/awas)
 
 **AI Web Action Standard (AWAS)** is an open-source specification that enables AI browsers like Atlas, Comet, and other AI agents to interact with websites through machine-readable action definitions—without disrupting traditional human browsing.
 
@@ -258,8 +258,8 @@ See [LICENSE](./LICENSE) and [NOTICE](./NOTICE) for details.
 ## 🗺️ Roadmap
 
 - [x] v1.0 - Core specification and basic examples
-- [x] v1.0.1 - MCP and A2A/ADK interoperability
-- [ ] v1.1 - Workflow definitions and multi-step actions
+- [x] v1.1 - MCP and A2A/ADK interoperability
+- [x] v1.1 - Enhanced discovery, typing, and safety contracts (specVersion, conformance levels L1/L2/L3, typed I/O)
 - [ ] v1.2 - Real-time update capabilities
 - [ ] v1.3 - Advanced authentication mechanisms
 - [ ] v2.0 - Extended protocol integrations
