@@ -1,27 +1,48 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://awas.dev/schema/v1/manifest.json",
-  "title": "AWAS Manifest",
-  "description": "AI Web Action Standard manifest schema",
+  "$id": "https://awas.dev/schema/v1.1/manifest.json",
+  "title": "AWAS Manifest v1.1",
+  "description": "AI Web Action Standard manifest schema with enhanced discovery, typing, and safety contracts",
   "type": "object",
   "required": [
+    "specVersion",
     "version",
     "actions"
   ],
   "properties": {
     "$schema": {
       "type": "string",
-      "format": "uri"
+      "format": "uri",
+      "description": "JSON Schema reference"
+    },
+    "specVersion": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$",
+      "description": "AWAS specification version (e.g., '1.1')",
+      "examples": ["1.0", "1.1"]
     },
     "version": {
       "type": "string",
-      "pattern": "^\\d+\\.\\d+$"
+      "pattern": "^\\d+\\.\\d+$",
+      "description": "Manifest version for this specific site"
+    },
+    "lastUpdated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of last manifest update"
     },
     "name": {
-      "type": "string"
+      "type": "string",
+      "description": "Human-readable name of the service/site"
     },
     "description": {
-      "type": "string"
+      "type": "string",
+      "description": "Brief description of the service"
+    },
+    "conformanceLevel": {
+      "type": "string",
+      "enum": ["L1", "L2", "L3"],
+      "description": "Conformance level: L1 (read-only), L2 (write with preview), L3 (full transactional)"
     },
     "actions": {
       "type": "array",
@@ -40,6 +61,9 @@
     },
     "authentication": {
       "$ref": "#/definitions/authentication"
+    },
+    "security": {
+      "$ref": "#/definitions/security"
     }
   },
   "definitions": {
@@ -55,7 +79,8 @@
       "properties": {
         "id": {
           "type": "string",
-          "pattern": "^[a-z_][a-z0-9_]*$"
+          "pattern": "^[a-z_][a-z0-9_]*$",
+          "description": "Stable action identifier"
         },
         "type": {
           "type": "string",
@@ -69,11 +94,24 @@
             "custom"
           ]
         },
+        "intent": {
+          "type": "string",
+          "enum": ["read", "write", "delete", "execute"],
+          "description": "Primary intent of the action"
+        },
+        "sideEffect": {
+          "type": "string",
+          "enum": ["safe", "idempotent", "destructive"],
+          "description": "Side-effect level: safe (no state change), idempotent (repeatable), destructive (permanent changes)",
+          "default": "safe"
+        },
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "Human-readable action name"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "description": "Detailed description of what the action does"
         },
         "method": {
           "type": "string",
@@ -86,13 +124,42 @@
           ]
         },
         "endpoint": {
-          "type": "string"
+          "type": "string",
+          "description": "API endpoint or URL pattern"
         },
         "selector": {
-          "type": "string"
+          "type": "string",
+          "description": "CSS selector for UI element (optional)"
         },
         "authentication_required": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Whether authentication is required"
+        },
+        "authScopes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Required OAuth/permission scopes"
+        },
+        "idempotencyKeySupported": {
+          "type": "boolean",
+          "description": "Whether action supports idempotency keys",
+          "default": false
+        },
+        "idempotencyKeyHeader": {
+          "type": "string",
+          "description": "Header name for idempotency key (e.g., 'Idempotency-Key')"
+        },
+        "preconditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of conditions that must be met before action can be executed"
+        },
+        "rateLimitHint": {
+          "$ref": "#/definitions/rateLimitHint"
         },
         "inputs": {
           "type": "array",
@@ -100,8 +167,40 @@
             "$ref": "#/definitions/input"
           }
         },
+        "inputSchema": {
+          "type": "object",
+          "description": "JSON Schema for request body/parameters"
+        },
         "outputs": {
           "$ref": "#/definitions/output"
+        },
+        "outputSchema": {
+          "type": "object",
+          "description": "JSON Schema for response body"
+        },
+        "openapi": {
+          "type": "object",
+          "description": "Reference to OpenAPI operation",
+          "properties": {
+            "$ref": {
+              "type": "string",
+              "description": "OpenAPI operation reference (e.g., '/openapi.json#/paths/~1search/get')"
+            }
+          }
+        },
+        "previewUrl": {
+          "type": "string",
+          "description": "URL for preview/dry-run endpoint"
+        },
+        "dryRunSupported": {
+          "type": "boolean",
+          "description": "Whether action supports dry-run mode",
+          "default": false
+        },
+        "conformanceLevel": {
+          "type": "string",
+          "enum": ["L1", "L2", "L3"],
+          "description": "Minimum conformance level required for this action"
         }
       }
     },
@@ -135,6 +234,10 @@
         },
         "description": {
           "type": "string"
+        },
+        "examples": {
+          "type": "array",
+          "description": "Example values for this input"
         },
         "validation": {
           "$ref": "#/definitions/validation"
@@ -172,6 +275,10 @@
         },
         "schema": {
           "type": "object"
+        },
+        "examples": {
+          "type": "array",
+          "description": "Example response payloads"
         },
         "success_codes": {
           "type": "array",
@@ -226,6 +333,19 @@
         }
       }
     },
+    "rateLimitHint": {
+      "type": "object",
+      "properties": {
+        "requests": {
+          "type": "integer",
+          "description": "Number of allowed requests"
+        },
+        "window": {
+          "type": "string",
+          "description": "Time window (e.g., '1m', '1h', '1d')"
+        }
+      }
+    },
     "authentication": {
       "type": "object",
       "properties": {
@@ -246,12 +366,46 @@
               "session",
               "api_key",
               "oauth",
-              "jwt"
+              "jwt",
+              "bearer"
             ]
           }
         },
         "endpoints": {
           "type": "object"
+        }
+      }
+    },
+    "security": {
+      "type": "object",
+      "description": "Security requirements and CSRF protection details",
+      "properties": {
+        "csrfRequired": {
+          "type": "boolean",
+          "description": "Whether CSRF tokens are required"
+        },
+        "csrfTokenHeader": {
+          "type": "string",
+          "description": "Header name for CSRF token (e.g., 'X-CSRF-Token')"
+        },
+        "requiredHeaders": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of required HTTP headers"
+        },
+        "allowedOrigins": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of allowed CORS origins"
+        },
+        "sameSite": {
+          "type": "string",
+          "enum": ["Strict", "Lax", "None"],
+          "description": "SameSite cookie policy"
         }
       }
     }
