@@ -145,7 +145,7 @@ Indirectly, yes. While traditional SEO focuses on search engines, AWAS helps wit
 
 ### Do I need to pay to use AWAS?
 
-No! AWAS is completely free and open-source under the MIT license. No fees, no royalties.
+No! AWAS is completely free and open-source under the Apache 2.0 license. No fees, no royalties.
 
 ### Can I contribute to AWAS development?
 
