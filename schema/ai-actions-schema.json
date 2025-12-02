@@ -180,12 +180,19 @@
         },
         "openapi": {
           "type": "object",
-          "description": "Reference to OpenAPI operation",
-          "properties": {
+            "description": "Optional OpenAPI interoperability - links this AWAS action to an OpenAPI operation for enhanced tooling support and documentation",          "properties": {
             "$ref": {
               "type": "string",
               "description": "OpenAPI operation reference (e.g., '/openapi.json#/paths/~1search/get')"
-            }
+            },
+              "documentUrl": {
+                "type": "string",
+                "description": "URL to the OpenAPI document (JSON or YAML), absolute or site-relative (e.g., '/openapi.json')"
+              },
+              "operationId": {
+                "type": "string",
+                "description": "The operationId from the OpenAPI document that this AWAS action corresponds to"
+              }
           }
         },
         "previewUrl": {
