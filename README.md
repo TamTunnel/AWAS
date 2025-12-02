@@ -39,11 +39,11 @@ This is achieved through:
 - ✅ **Security First** - Built-in rate limiting, auth, and permissions
 - ✅ **Open Standard** - Royalty-free, community-driven
 - ✅ **Framework Agnostic** - Works with any backend/frontend stack
+- ✅ **OpenAPI Interoperability** - Link to existing OpenAPI/Swagger specs
 
 ## 🔗 Interoperability
 
-AWAS is designed to be **MCP (Model Context Protocol), A2A (Agent-to-Agent), and ADK (Agent Development Kit) ready**, enabling seamless integration with modern AI agent ecosystems.
-
+AWAS is designed to be **MCP (Model Context Protocol), A2A (Agent-to-Agent), ADK (Agent Development Kit), and OpenAPI/Swagger ready**, enabling seamless integration with modern AI agent ecosystems and existing API infrastructure.
 ### Protocol Support
 
 #### MCP (Model Context Protocol)
@@ -271,9 +271,8 @@ See [LICENSE](./LICENSE) and [NOTICE](./NOTICE) for details.
 ## 🗺️ Roadmap
 
 - [x] v1.0 - Core specification and basic examples
-- [x] v1.1 - MCP and A2A/ADK interoperability
-- [x] v1.1 - Enhanced discovery, typing, and safety contracts (specVersion, conformance levels L1/L2/L3, typed I/O)
-- [ ] v1.2 - Real-time update capabilities
+- [x] v1.1 - Enhanced discovery, typing, and safety contracts (specVersion, conformance levels L1/L2/L3, typed I/O)- [ ] v1.2 - Real-time update capabilities
+- [x] v1.1 - MCP, A2A/ADK, and OpenAPI/Swagger interoperability
 - [ ] v1.3 - Advanced authentication mechanisms
 - [ ] v2.0 - Extended protocol integrations
 
