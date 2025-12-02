@@ -504,6 +504,125 @@ Manifest discovery through `<link>` tags in `<head>`:
 }
 ```
 
+### HTTP Caching and ETags
+
+Servers SHOULD implement HTTP caching headers to enable efficient manifest discovery and reduce unnecessary network requests.
+
+**Required Response Headers:**
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+ETag: "33a64df551425fcc55e4d42a148795d9f25f89d4"
+Cache-Control: public, max-age=3600, must-revalidate
+Last-Modified: Mon, 02 Dec 2024 00:00:00 GMT
+```
+
+**Key Headers:**
+
+- **ETag**: Strong validator for content changes. Agents can use `If-None-Match` for conditional requests.
+- **Cache-Control**: Controls caching behavior. Recommended: `public, max-age=3600, must-revalidate`
+- **Last-Modified**: Timestamp of last manifest update (should match `lastUpdated` field in manifest)
+
+**Agent Behavior:**
+
+Agents SHOULD:
+1. Cache manifests locally using ETag as cache key
+2. Send `If-None-Match` header with cached ETag on subsequent requests
+3. Handle `304 Not Modified` responses by using cached manifest
+4. Respect `Cache-Control` directives
+5. Revalidate cache after `max-age` expires
+
+**Example Request with ETag:**
+
+```http
+GET /.well-known/ai-actions.json HTTP/1.1
+Host: example.com
+If-None-Match: "33a64df551425fcc55e4d42a148795d9f25f89d4"
+User-Agent: AIAgent/1.0
+```
+
+**Example 304 Response:**
+
+```http
+HTTP/1.1 304 Not Modified
+ETag: "33a64df551425fcc55e4d42a148795d9f25f89d4"
+Cache-Control: public, max-age=3600, must-revalidate
+```
+
+### Version Negotiation
+
+AWAS supports version negotiation through HTTP headers and manifest fields.
+
+**Version Negotiation Headers:**
+
+Agents SHOULD send:
+```http
+AWAS-Version: 1.1
+Accept: application/json
+```
+
+Servers MAY send:
+```http
+AWAS-Version: 1.1
+Vary: AWAS-Version
+```
+
+**Manifest Version Fields:**
+
+- `specVersion`: AWAS specification version (e.g., "1.1")
+- `version`: Manifest version for this specific site (e.g., "2.3")
+- `lastUpdated`: ISO 8601 timestamp
+
+**Version Compatibility:**
+
+1. **Same Major Version**: Agents MUST support all minor versions within same major version
+   - Example: Agent supporting 1.1 MUST work with 1.0 manifests
+
+2. **Different Major Version**: Agents SHOULD gracefully degrade or notify user
+   - Example: Agent 1.x MAY reject 2.x manifests
+
+3. **Version Probing**: Agents MAY send HEAD request first to check version
+   ```http
+   HEAD /.well-known/ai-actions.json HTTP/1.1
+   Host: example.com
+   ```
+
+**Version Negotiation Flow:**
+
+```
+1. Agent sends HEAD request with AWAS-Version: 1.1
+2. Server responds with AWAS-Version: 1.1, ETag, Last-Modified
+3. Agent caches version compatibility
+4. Agent sends GET request with If-None-Match
+5. Server responds with 200 or 304
+```
+
+**Forward Compatibility:**
+
+Manifests SHOULD include:
+- Unknown fields MAY be ignored by older agents
+- Required fields MUST be validated
+- Optional fields SHOULD have sensible defaults
+
+**Example Version Check:**
+
+```javascript
+// Agent checks compatibility
+const manifestVersion = parseFloat(manifest.specVersion);
+const agentVersion = 1.1;
+
+if (Math.floor(manifestVersion) !== Math.floor(agentVersion)) {
+  throw new Error(`Incompatible AWAS version: ${manifestVersion}`);
+}
+
+// Minor version differences are acceptable
+if (manifestVersion > agentVersion) {
+  console.warn(`Newer manifest version (${manifestVersion}), some features may not be supported`);
+}
+```
+
+
 ## Extended Robots.txt
 
 ### Standard Directives
