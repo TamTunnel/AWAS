@@ -86,6 +86,35 @@ class AWASProvider(Provider):
         return call_awas_action(action_id, params)
 ```
 
+#### OpenAPI/Swagger Integration
+
+AWAS actions can reference existing OpenAPI specifications to reduce duplication and leverage familiar tooling:
+
+```json
+{
+  "id": "search_products",
+  "name": "Search Products",
+  "method": "GET",
+  "endpoint": "/api/search",
+  "openapi": {
+    "documentUrl": "/openapi.json",
+    "operationId": "searchProducts"
+  },
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "q": {"type": "string"}
+    }
+  }
+}
+```
+
+**Benefits:**
+- Link to existing OpenAPI/Swagger specs
+- Reduce schema duplication
+- Use familiar API documentation tools
+- Maintain AWAS as the authoritative source for AI behavior
+
 ## 🚀 Quick Start
 
 ### For Website Owners
@@ -106,6 +135,10 @@ class AWASProvider(Provider):
       "intent": "read",
       "sideEffect": "safe",
       "conformanceLevel": "L1",
+          "openapi": {
+            "documentUrl": "/openapi.json",
+            "operationId": "searchProducts"
+          },
       "parameters": [
         {
           "name": "query",
