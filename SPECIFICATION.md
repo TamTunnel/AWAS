@@ -4,6 +4,7 @@
 - [Overview](#overview)
 - [Core Concepts](#core-concepts)
 - [AI Action Manifest](#ai-action-manifest)
+- [OpenAPI Interoperability](#openapi-interoperability)
 - [HTML Data Attributes](#html-data-attributes)
 - [Discovery Mechanisms](#discovery-mechanisms)
 - [Extended Robots.txt](#extended-robotstxt)
@@ -228,6 +229,111 @@ This follows the RFC 8615 well-known URI specification.
 "sameSite": "strict|lax|none (optional)"
 }
 ```
+## OpenAPI Interoperability
+
+AWAS provides optional OpenAPI integration to leverage existing API documentation and tooling while maintaining AWAS as the source of truth for AI agent interactions.
+
+### Purpose
+
+The `openapi` field in action definitions allows sites to:
+- Link AWAS actions to existing OpenAPI/Swagger specifications
+- Reduce duplication between AWAS manifests and OpenAPI docs
+- Enable developers familiar with OpenAPI to adopt AWAS more easily
+- Leverage existing OpenAPI tooling for documentation, code generation, and testing
+
+### Design Principles
+
+1. **AWAS is Authoritative**: If there's any conflict between AWAS manifest and OpenAPI spec, AWAS semantics take precedence for agent behavior
+2. **Optional Enhancement**: OpenAPI fields are entirely optional; agents that don't support OpenAPI simply ignore them
+3. **Vendor Neutral**: Not tied to any specific API platform or vendor
+4. **Backward Compatible**: Existing manifests without OpenAPI references continue to work unchanged
+
+### OpenAPI Object Structure
+
+The `openapi` field within an action supports the following properties:
+
+```json
+{
+  "openapi": {
+    "documentUrl": "/openapi.json",
+    "operationId": "searchProducts",
+    "$ref": "#/paths/~1api~1search/get"
+  }
+}
+```
+
+#### Fields
+
+- **`documentUrl`** (string, optional): URL to the OpenAPI document (JSON or YAML), absolute or site-relative (e.g., `/openapi.json`, `https://api.example.com/v3/openapi.yaml`)
+- **`operationId`** (string, optional): The `operationId` from the OpenAPI document that corresponds to this AWAS action
+- **`$ref`** (string, optional): JSON Pointer or reference to the specific operation in the OpenAPI document (e.g., `#/paths/~1api~1search/get`)
+
+### Usage Guidelines
+
+**When to use each field:**
+
+- Use `documentUrl` + `operationId` when your OpenAPI spec uses operation IDs (recommended)
+- Use `documentUrl` + `$ref` when referencing operations by path and method
+- All three fields can be provided for maximum compatibility
+
+**Best practices:**
+
+1. Ensure HTTP method and endpoint in AWAS match the OpenAPI operation
+2. Use `inputSchema` and `outputSchema` in AWAS even when linking to OpenAPI for faster agent parsing
+3. Keep OpenAPI spec and AWAS manifest synchronized when making changes
+4. Document any AWAS-specific semantics (like `sideEffect`, `intent`, `preconditions`) that aren't captured in OpenAPI
+
+### Example
+
+```json
+{
+  "id": "search_products",
+  "name": "Search Products",
+  "description": "Search for products by keyword",
+  "method": "GET",
+  "endpoint": "/api/search",
+  "intent": "read",
+  "sideEffect": "safe",
+  "openapi": {
+    "documentUrl": "/openapi.json",
+    "operationId": "searchProducts"
+  },
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "q": {
+        "type": "string",
+        "description": "Search query"
+      }
+    },
+    "required": ["q"]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "results": {
+        "type": "array",
+        "items": {"type": "object"}
+      }
+    }
+  }
+}
+```
+
+### Agent Behavior
+
+Agents that support OpenAPI interoperability MAY:
+- Fetch the OpenAPI document for additional context
+- Use OpenAPI schemas for enhanced validation
+- Generate code or SDK calls based on OpenAPI specs
+- Provide richer documentation to users
+
+Agents MUST:
+- Treat OpenAPI references as optional hints, not requirements
+- Fall back gracefully if OpenAPI document is unavailable
+- Respect AWAS manifest as the primary source of truth
+- Never require OpenAPI support for basic functionality
+
 
 ## HTML Data Attributes
 
