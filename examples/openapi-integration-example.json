@@ -1,0 +1,237 @@
+{
+  "$schema": "https://awas.dev/schema/v1.1/manifest.json",
+  "specVersion": "1.1",
+  "version": "1.0",
+  "lastUpdated": "2025-12-02T00:00:00Z",
+  "name": "E-Commerce API with OpenAPI Integration",
+  "description": "Example AWAS manifest demonstrating OpenAPI interoperability for an e-commerce platform",
+  "conformanceLevel": "L2",
+  "actions": [
+    {
+      "id": "search_products",
+      "type": "search",
+      "name": "Search Products",
+      "description": "Search for products by keyword, category, or filters",
+      "method": "GET",
+      "endpoint": "/api/v1/products/search",
+      "intent": "read",
+      "sideEffect": "safe",
+      "conformanceLevel": "L1",
+      "openapi": {
+        "documentUrl": "/openapi.json",
+        "operationId": "searchProducts",
+        "$ref": "#/paths/~1api~1v1~1products~1search/get"
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "q": {
+            "type": "string",
+            "description": "Search query string",
+            "examples": ["laptop", "wireless mouse", "USB-C cable"]
+          },
+          "category": {
+            "type": "string",
+            "description": "Product category filter",
+            "enum": ["electronics", "clothing", "books", "home"],
+            "examples": ["electronics"]
+          },
+          "minPrice": {
+            "type": "number",
+            "description": "Minimum price filter",
+            "examples": [10.00]
+          },
+          "maxPrice": {
+            "type": "number",
+            "description": "Maximum price filter",
+            "examples": [500.00]
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Maximum number of results to return",
+            "default": 20,
+            "examples": [20]
+          }
+        },
+        "required": ["q"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {"type": "string"},
+                "name": {"type": "string"},
+                "price": {"type": "number"},
+                "category": {"type": "string"},
+                "inStock": {"type": "boolean"}
+              }
+            }
+          },
+          "total": {"type": "integer"},
+          "page": {"type": "integer"}
+        },
+        "examples": [
+          {
+            "results": [
+              {
+                "id": "prod-123",
+                "name": "Wireless Mouse",
+                "price": 29.99,
+                "category": "electronics",
+                "inStock": true
+              }
+            ],
+            "total": 1,
+            "page": 1
+          }
+        ]
+      },
+      "rateLimitHint": {
+        "requests": 100,
+        "window": "1m"
+      }
+    },
+    {
+      "id": "add_to_cart",
+      "type": "state_change",
+      "name": "Add to Cart",
+      "description": "Add a product to the shopping cart",
+      "method": "POST",
+      "endpoint": "/api/v1/cart/items",
+      "intent": "write",
+      "sideEffect": "idempotent",
+      "conformanceLevel": "L2",
+      "idempotencyKeySupported": true,
+      "idempotencyKeyHeader": "Idempotency-Key",
+      "previewUrl": "/api/v1/cart/items/preview",
+      "dryRunSupported": true,
+      "authentication_required": true,
+      "authScopes": ["cart:write"],
+      "openapi": {
+        "documentUrl": "/openapi.json",
+        "operationId": "addToCart"
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "productId": {
+            "type": "string",
+            "description": "ID of the product to add",
+            "examples": ["prod-123"]
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "Quantity to add",
+            "minimum": 1,
+            "default": 1,
+            "examples": [2]
+          },
+          "options": {
+            "type": "object",
+            "description": "Product options (size, color, etc.)",
+            "examples": [
+              {"size": "M", "color": "blue"}
+            ]
+          }
+        },
+        "required": ["productId"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "cartId": {"type": "string"},
+          "itemId": {"type": "string"},
+          "productId": {"type": "string"},
+          "quantity": {"type": "integer"},
+          "subtotal": {"type": "number"},
+          "cart": {
+            "type": "object",
+            "properties": {
+              "totalItems": {"type": "integer"},
+              "totalPrice": {"type": "number"}
+            }
+          }
+        }
+      },
+      "preconditions": [
+        "User must be authenticated",
+        "Product must be in stock"
+      ],
+      "rateLimitHint": {
+        "requests": 30,
+        "window": "1m"
+      }
+    },
+    {
+      "id": "get_product_details",
+      "type": "data_retrieval",
+      "name": "Get Product Details",
+      "description": "Retrieve detailed information about a specific product",
+      "method": "GET",
+      "endpoint": "/api/v1/products/{productId}",
+      "intent": "read",
+      "sideEffect": "safe",
+      "conformanceLevel": "L1",
+      "openapi": {
+        "documentUrl": "https://api.example.com/v1/openapi.yaml",
+        "operationId": "getProductById",
+        "$ref": "#/paths/~1api~1v1~1products~1{productId}/get"
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "productId": {
+            "type": "string",
+            "description": "Unique product identifier",
+            "examples": ["prod-123", "prod-456"]
+          }
+        },
+        "required": ["productId"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string"},
+          "name": {"type": "string"},
+          "description": {"type": "string"},
+          "price": {"type": "number"},
+          "currency": {"type": "string"},
+          "category": {"type": "string"},
+          "images": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "inStock": {"type": "boolean"},
+          "stockQuantity": {"type": "integer"},
+          "rating": {"type": "number"},
+          "reviewCount": {"type": "integer"}
+        }
+      }
+    }
+  ],
+  "security": {
+    "csrfRequired": true,
+    "csrfTokenHeader": "X-CSRF-Token",
+    "requiredHeaders": ["User-Agent"],
+    "allowedOrigins": ["*"],
+    "sameSite": "Lax"
+  },
+  "rate_limits": {
+    "requests_per_minute": 60,
+    "requests_per_hour": 1000,
+    "burst_limit": 10
+  },
+  "authentication": {
+    "required": false,
+    "optional_for": ["search_products", "get_product_details"],
+    "methods": ["session", "oauth", "bearer"],
+    "endpoints": {
+      "login": "/auth/login",
+      "token": "/auth/token"
+    }
+  }
+}
