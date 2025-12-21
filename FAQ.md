@@ -224,7 +224,7 @@ Roadmap includes:
 
 ### Can AWAS become a W3C standard?
 
-That's the goal! Community adoption and feedback will help AWAS evolve into a formal web standard.
+That's the goal!! Community adoption and feedback will help AWAS evolve into a formal web standard.
 
 ## Still Have Questions?
 
