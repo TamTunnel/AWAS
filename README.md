@@ -6,7 +6,7 @@
 
 **AI Web Action Standard (AWAS)** is an open-source specification that enables AI browsers like Atlas, Comet, and other AI agents to interact with websites through machine-readable action definitions—without disrupting traditional human browsing.
 
-- **Simple Analogy:** Think of it like Street signs for AI agents. Street signs tell drivers where to go without trial-and-error navigation. AWAS tells AI agents what actions exist and how to use them without DOM scraping. If a road has a turn (search function), the sign tells you directly. Same with AWAS—if a site has an action, the manifest describes it explicitly.
+- **Simple Analogy:** Think of it like Street signs for AI agents. Street signs tell drivers where to go without trial-and-error navigation. AWAS tells AI agents what actions exist and how to use them without DOM scraping. If a road has a turn (search function), the sign tells you directly. Same with AWAS; if a site has an action, the manifest describes it explicitly.
 
 ## 🎯 Problem Statement
 
