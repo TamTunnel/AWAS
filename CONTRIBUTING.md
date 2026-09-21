@@ -10,7 +10,7 @@ Be respectful, inclusive, and constructive in all interactions.
 
 ### Reporting Bugs
 
-1. Check if the bug has already been reported in [Issues](https://github.com/TamTunnel/awas/issues)
+1. Check if the bug has already been reported in [Issues](https://github.com/TamTunnel/AWAS/issues)
 2. If not, create a new issue with:
    - Clear, descriptive title
    - Steps to reproduce
@@ -19,7 +19,7 @@ Be respectful, inclusive, and constructive in all interactions.
 
 ### Suggesting Enhancements
 
-1. Check [Discussions](https://github.com/TamTunnel/awas/discussions) for similar ideas
+1. Check [Discussions](https://github.com/TamTunnel/AWAS/discussions) for similar ideas
 2. Create a new discussion or issue explaining:
    - Use case and motivation
    - Proposed solution
@@ -62,23 +62,26 @@ Documentation improvements are always welcome!
 
 ## Development Setup
 
+This repository is a documentation and specification repository — there is no package to install and no test suite to run. The contents are Markdown specification documents, example manifests, JSON schemas, and sample middleware code.
+
 ```bash
 # Clone your fork
-git clone https://github.com/YOUR-USERNAME/awas.git
-cd awas
-
-# Install dependencies (if applicable)
-npm install  # or pip install -r requirements.txt
-
-# Run tests
-npm test  # or pytest
+git clone https://github.com/YOUR-USERNAME/AWAS.git
+cd AWAS
 ```
+
+To validate a manifest against the JSON schema, use any JSON Schema validator (e.g., Python's `jsonschema` package) with `schema/ai-actions-schema.json`. A convenience parser example lives in `examples/awas-parser.js` (Node.js, no dependencies) and `examples/awas_middleware.py` (Python, no third-party dependencies).
 
 ## Style Guidelines
 
-### Code Style
-- JavaScript: Follow ESLint configuration
-- Python: Follow PEP 8
+### Specification Prose
+- Follow RFC 2119 key words (MUST, MUST NOT, SHOULD, SHOULD NOT, MAY) when writing normative text; keep them capitalized and use them only where a requirement is intended
+- Use clear, concise language
+- Keep the `data-ai-*` attribute names and conformance level names (L1/L2/L3) consistent with SPECIFICATION.md and CONFORMANCE_LEVELS.md — those files are canonical for terminology
+
+### Example Code
+- JavaScript: clear, idiomatic style; no build step assumed
+- Python: follow PEP 8
 - Use meaningful variable and function names
 - Add comments for complex logic
 
@@ -93,11 +96,14 @@ npm test  # or pytest
 - Keep lines under 100 characters
 - Use Markdown formatting
 
-## Testing
+## Proposing Spec Changes
 
-- Add tests for new features
-- Ensure all tests pass before submitting PR
-- Include both unit and integration tests where appropriate
+Because this repo defines a specification, changes to normative text need extra care:
+
+1. Open an issue or discussion describing the problem and the proposed wording *before* writing a large change, so maintainers and implementers can weigh in.
+2. Keep changes minimal and consistent with the rest of the spec — update every file that describes the same concept (check SPECIFICATION.md, CONFORMANCE_LEVELS.md, the JSON schema, and the examples).
+3. Do not change normative attribute names (`data-ai-*`), manifest fields, or conformance level semantics without a version-bump discussion in the issue.
+4. Reference the related issue in your pull request.
 
 ## Review Process
 
@@ -107,7 +113,7 @@ npm test  # or pytest
 
 ## Questions?
 
-Feel free to ask in [Discussions](https://github.com/TamTunnel/awas/discussions) or open an issue!
+Feel free to ask in [Discussions](https://github.com/TamTunnel/AWAS/discussions) or open an issue!
 
 ## License
 
