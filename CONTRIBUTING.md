@@ -111,4 +111,4 @@ Feel free to ask in [Discussions](https://github.com/TamTunnel/awas/discussions)
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the MIT License.
+By contributing, you agree that your contributions will be licensed under the Apache License, Version 2.0.
