@@ -374,7 +374,8 @@
               "api_key",
               "oauth",
               "jwt",
-              "bearer"
+              "bearer",
+              "mandate"
             ]
           }
         },
