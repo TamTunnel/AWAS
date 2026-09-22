@@ -4,10 +4,10 @@ This guide provides step-by-step instructions for implementing AWAS on your webs
 
 ## Table of Contents
 - [Prerequisites](#prerequisites)
-- [Phase 1: Basic Setup](#phase-1-basic-setup)
-- [Phase 2: HTML Enhancement](#phase-2-html-enhancement)
-- [Phase 3: Server Implementation](#phase-3-server-implementation)
-- [Phase 4: Testing](#phase-4-testing)
+- [Phase 1: Basic Setup](#phase-1-basic-setup-30-minutes)
+- [Phase 2: HTML Enhancement](#phase-2-html-enhancement-2-4-hours)
+- [Phase 3: Server Implementation](#phase-3-server-implementation-4-8-hours)
+- [Phase 4: Testing](#phase-4-testing-2-4-hours)
 - [Framework-Specific Guides](#framework-specific-guides)
 
 ## Prerequisites

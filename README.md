@@ -188,13 +188,13 @@ AWAS actions can reference existing OpenAPI specifications to reduce duplication
 2. **Add HTML Data Attributes** (optional enhancement):
 
 ```html
-<div data-awas-action="search_products" data-awas-element="search-form">
-  <input type="text" name="query" data-awas-param="query">
-  <select name="category" data-awas-param="category">
+<div data-ai-action="search_products">
+  <input type="text" name="query" data-ai-param="query">
+  <select name="category" data-ai-param="category">
     <option value="electronics">Electronics</option>
     <option value="clothing">Clothing</option>
   </select>
-  <button data-awas-trigger>Search</button>
+  <button data-ai-action-trigger="search_products">Search</button>
 </div>
 ```
 
@@ -231,11 +231,10 @@ console.log(results);
 
 ## 📖 Documentation
 
-- [Full Specification](./docs/SPECIFICATION.md)
-- [Implementation Guide](./docs/IMPLEMENTATION.md)
+- [Full Specification](./SPECIFICATION.md)
+- [Implementation Guide](./IMPLEMENTATION.md)
 - [Examples](./examples/)
-- [API Reference](./docs/API.md)
-- [Security Best Practices](./docs/SECURITY.md)
+- [Security Best Practices](./SECURITY.md)
 
 ## 💪 Benefits
 
@@ -272,7 +271,7 @@ AWAS includes security features:
 - Privacy-respecting directives
 - CSRF protection guidelines
 
-See [SECURITY.md](./docs/SECURITY.md) for details.
+See [SECURITY.md](./SECURITY.md) for details.
 
 ## 🤝 Contributing
 

@@ -2,6 +2,7 @@
 
 ## Table of Contents
 - [Overview](#overview)
+- [Protocol Interoperability: MCP, ADK/A2A](#protocol-interoperability-mcp-adka2a)
 - [Core Concepts](#core-concepts)
 - [AI Action Manifest](#ai-action-manifest)
 - [OpenAPI Interoperability](#openapi-interoperability)
@@ -10,6 +11,8 @@
 - [Extended Robots.txt](#extended-robotstxt)
 - [HTTP Headers](#http-headers)
 - [Security Considerations](#security-considerations)
+- [Versioning](#versioning)
+- [References](#references)
 
 ## Overview
 
@@ -46,9 +49,13 @@ print(manifest, 'found:', resp.json())
 
 ### Conformance Levels
 
-- **Level 1 (Minimal)**: AI Action Manifest only
-- **Level 2 (Standard)**: Manifest + HTML attributes
-- **Level 3 (Complete)**: All components including discovery endpoints
+AWAS v1.1 defines three conformance levels to enable phased adoption:
+
+- **Level 1 (L1 - Read-Only)**: Safe, read-only actions (search, filter, view). No write operations, no preview required.
+- **Level 2 (L2 - Write with Preview)**: Write operations with preview/dry-run support before execution. Includes L1 capabilities.
+- **Level 3 (L3 - Full Transactional)**: Complete transactional support with idempotency, rollback, and complex workflows. Includes L1 and L2 capabilities.
+
+See [CONFORMANCE_LEVELS.md](./CONFORMANCE_LEVELS.md) for the canonical level definitions, detailed requirements, and examples.
 
 ## Core Concepts
 
@@ -698,8 +705,19 @@ AWAS v1.1 introduces structured conformance levels to enable phased adoption:
 - **Level 2 (L2 - Write with Preview)**: Write operations with preview/dry-run support before execution. Includes L1 capabilities.
 - **Level 3 (L3 - Full Transactional)**: Complete transactional support with idempotency, rollback, and complex workflows. Includes L1 and L2 capabilities.
 
-See [CONFORMANCE_LEVELS.md](./CONFORMANCE_LEVELS.md) for detailed requirements and examples.
+See [CONFORMANCE_LEVELS.md](./CONFORMANCE_LEVELS.md) for the canonical level definitions, detailed requirements, and examples.
 
+
+### Manifest Authority
+
+The same-origin manifest (`/.well-known/ai-actions.json`) is the authoritative declaration of a site's AI-accessible actions. Agents MUST treat the same-origin manifest as authoritative for a site's declared actions, endpoints, parameters, and constraints.
+
+Inline content (`data-ai-*` HTML attributes and other embedded hints) and third-party content are only hints and MUST NOT be treated as authoritative. Specifically:
+
+- Agents MUST NOT execute an action described only by inline or third-party content unless that action is also declared in the same-origin manifest.
+- Where inline attributes conflict with the same-origin manifest, the manifest takes precedence.
+- Discovery signals in `robots.txt` and HTTP response headers complement the manifest but do not override it.
+- Content from a third-party origin (embeds, ads, user-generated content, syndicated feeds) MUST be treated as untrusted and MUST NOT introduce new executable actions.
 
 ### CSRF Protection
 
