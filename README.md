@@ -313,3 +313,15 @@ See [LICENSE](./LICENSE) and [NOTICE](./NOTICE) for details.
 ---
 
 **Made with ❤️ for the AI-driven web**
+
+## 🔑 Agent Authentication (Sovereign Identity)
+
+Websites can authenticate AI agents without passwords, sessions, or OTP codes:
+declare `"mandate"` in the manifest's `authentication.methods`, and agents
+present a signed owner-delegated mandate chain
+(`Owner DID → agency grant → Agent DID → task mandate`) as
+`Authorization: Mandate <JWS>`.
+
+See [AGENT-AUTHENTICATION.md](./AGENT-AUTHENTICATION.md) for the website-side
+guide, and the [sovereign-identity](https://github.com/TamTunnel/sovereign-identity)
+repo for the binding spec and reference implementation.

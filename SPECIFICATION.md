@@ -218,13 +218,17 @@ This follows the RFC 8615 well-known URI specification.
 {
   "required": "boolean",
   "optional_for": ["array of action IDs"],
-  "methods": ["session", "api_key", "oauth", "jwt"],
+  "methods": ["session", "api_key", "oauth", "jwt", "mandate"],
   "endpoints": {
     "login": "/auth/login",
     "token": "/auth/token"
   }
 }
 ```
+
+The `"mandate"` method authenticates AI agents with signed owner-delegated
+mandates instead of passwords or sessions; see
+[AGENT-AUTHENTICATION.md](./AGENT-AUTHENTICATION.md).
 ### Security Object
 
 ```json
