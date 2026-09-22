@@ -32,7 +32,7 @@ git commit -m "Initial commit: AWAS v1.0.0 - AI Web Action Standard"
 
 # Add remote origin (replace TamTunnel with your username if different)
 git branch -M main
-git remote add origin https://github.com/TamTunnel/awas.git
+git remote add origin https://github.com/TamTunnel/AWAS.git
 
 # Push to GitHub
 git push -u origin main
@@ -47,7 +47,7 @@ git push -u origin main
    - LICENSE
    - CONTRIBUTING.md
    - .gitignore
-   - docs/ folder (with all its files)
+   - documentation files (SPECIFICATION.md, IMPLEMENTATION.md, SECURITY.md, FAQ.md, CONFORMANCE_LEVELS.md)
    - examples/ folder (with all its files and subfolders)
    - schema/ folder (with its file)
 
@@ -161,14 +161,14 @@ First official release of the AI Web Action Standard!
 
 ## 🚀 Quick Start
 
-See [README.md](https://github.com/TamTunnel/awas/blob/main/README.md) for quick start guide.
+See [README.md](https://github.com/TamTunnel/AWAS/blob/main/README.md) for quick start guide.
 
 ## 📚 Documentation
 
-- [Specification](https://github.com/TamTunnel/awas/blob/main/docs/SPECIFICATION.md)
-- [Implementation Guide](https://github.com/TamTunnel/awas/blob/main/docs/IMPLEMENTATION.md)
-- [Security Guidelines](https://github.com/TamTunnel/awas/blob/main/docs/SECURITY.md)
-- [FAQ](https://github.com/TamTunnel/awas/blob/main/docs/FAQ.md)
+- [Specification](https://github.com/TamTunnel/AWAS/blob/main/SPECIFICATION.md)
+- [Implementation Guide](https://github.com/TamTunnel/AWAS/blob/main/IMPLEMENTATION.md)
+- [Security Guidelines](https://github.com/TamTunnel/AWAS/blob/main/SECURITY.md)
+- [FAQ](https://github.com/TamTunnel/AWAS/blob/main/FAQ.md)
 ```
 5. Click "Publish release"
 
@@ -216,7 +216,7 @@ jobs:
   ✅ Security-first
   ✅ Easy to implement
 
-  https://github.com/TamTunnel/awas
+  https://github.com/TamTunnel/AWAS
 
   #AI #WebStandards #OpenSource #AIBrowsers
   ```
@@ -249,10 +249,10 @@ Reach out to:
 
 ## Repository URLs
 
-- **Repository**: https://github.com/TamTunnel/awas
+- **Repository**: https://github.com/TamTunnel/AWAS
 - **Website** (GitHub Pages): https://TamTunnel.github.io/awas
-- **Issues**: https://github.com/TamTunnel/awas/issues
-- **Discussions**: https://github.com/TamTunnel/awas/discussions
+- **Issues**: https://github.com/TamTunnel/AWAS/issues
+- **Discussions**: https://github.com/TamTunnel/AWAS/discussions
 
 ## Next Steps After Setup
 

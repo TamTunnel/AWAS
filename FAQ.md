@@ -149,7 +149,7 @@ No! AWAS is completely free and open-source under the Apache 2.0 license. No fee
 
 ### Can I contribute to AWAS development?
 
-Absolutely! AWAS is community-driven. See [CONTRIBUTING.md](../CONTRIBUTING.md) for guidelines.
+Absolutely! AWAS is community-driven. See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
 
 ## Privacy Questions
 
