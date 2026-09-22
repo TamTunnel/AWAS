@@ -1,0 +1,1 @@
+{"dependencies":{"@tamtunnel/si-wallet-mcp":"^0.1.0","express":"^4.21.2"},"description":"Reference website-side implementation of AWAS mandate authentication (TamTunnel/AWAS examples/merchant-demo)","license":"Apache-2.0","name":"acme-travel-demo-merchant","private":true,"scripts":{"e2e":"node scripts/e2e.mjs","start":"node server.mjs"},"type":"module","version":"1.0.0"}
